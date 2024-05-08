@@ -79,11 +79,11 @@ app.put("/herois/:id", async (req, res) => {
 app.delete("/herois/:id", async (req, res) => {
   const { id } = req.params;
   await pool.query("DELETE FROM herois WHERE id = $1", [id]);
-try {
+  try {
     res.json({
       message: "Herói deletado com sucesso!",
     });
-} catch (err) {
+  } catch (err) {
     console.error("Não foi possível deletar o herói!");
   }
 });
