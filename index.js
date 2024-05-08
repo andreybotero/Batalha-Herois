@@ -38,16 +38,16 @@ app.get("/herois/:id", async (req, res) => {
 
 //Create herói
 app.post("/herois", async (req, res) => {
-  const { nome_herois, poder, hp, nivel } = req.body;
+  const { nome_heroi, poder, hp, nivel } = req.body;
   await pool.query(
-    "INSERT INTO herois (nome_herois, poder, hp, nivel) VALUES ($1, $2, $3, $4)",
-    [nome_herois, poder, hp, nivel]
+    "INSERT INTO herois (nome_heroi, poder, hp, nivel) VALUES ($1, $2, $3, $4)",
+    [nome_heroi, poder, hp, nivel]
   );
   try {
     res.json({
       message: "Herói criado com sucesso!",
       body: {
-        heroi: { nome_herois, poder, hp, nivel },
+        heroi: { nome_heroi, poder, hp, nivel },
       },
     });
   } catch (err) {
@@ -58,16 +58,16 @@ app.post("/herois", async (req, res) => {
 //Update herói
 app.put("/herois/:id", async (req, res) => {
   const { id } = req.params;
-  const { nome_herois, poder, hp, nivel } = req.body;
+  const { nome_heroi, poder, hp, nivel } = req.body;
   await pool.query(
-    "UPDATE herois SET nome_herois = $1, poder = $2, hp = $3, nivel = $4 WHERE id = $5",
-    [nome_herois, poder, hp, nivel, id]
+    "UPDATE herois SET nome_heroi = $1, poder = $2, hp = $3, nivel = $4 WHERE id = $5",
+    [nome_heroi, poder, hp, nivel, id]
   );
   try {
     res.json({
       message: "Herói atualizado com sucesso!",
       body: {
-        heroi: { nome_herois, poder, hp, nivel },
+        heroi: { nome_heroi, poder, hp, nivel },
       },
     });
   } catch (err) {
