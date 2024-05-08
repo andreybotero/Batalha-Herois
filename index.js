@@ -27,3 +27,13 @@ app.get("/herois/:id", async (req, res) => {
   const { rows } = await pool.query("SELECT * FROM herois WHERE id = $1", [id]);
   res.json(rows);
 });
+
+//Create herói
+app.post("/herois", async (req, res) => {
+  const { nome_herois, poder, hp, nivel } = req.body;
+  await pool.query(
+    "INSERT INTO herois (nome_herois, poder, hp, nivel) VALUES ($1, $2, $3, $4)",
+    [nome_herois, poder, hp, nivel]
+  );
+  res.json({ message: "Herói criado com sucesso!" });
+});
