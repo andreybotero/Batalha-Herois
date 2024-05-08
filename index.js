@@ -48,3 +48,14 @@ app.put("/herois/:id", async (req, res) => {
   );
   res.json({ message: "Herói atualizado com sucesso!" });
 });
+
+//Delete herói
+app.delete("/herois/:id", async (req, res) => {
+  const { id } = req.params;
+  await pool.query("DELETE FROM herois WHERE id = $1", [id]);
+  res.json({ message: "Herói deletado com sucesso!" });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server rodando na porta ${PORT}`);
+});
