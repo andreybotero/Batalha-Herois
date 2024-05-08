@@ -37,3 +37,14 @@ app.post("/herois", async (req, res) => {
   );
   res.json({ message: "Herói criado com sucesso!" });
 });
+
+//Update herói
+app.put("/herois/:id", async (req, res) => {
+  const { id } = req.params;
+  const { nome_herois, poder, hp, nivel } = req.body;
+  await pool.query(
+    "UPDATE herois SET nome_herois = $1, poder = $2, hp = $3, nivel = $4 WHERE id = $5",
+    [nome_herois, poder, hp, nivel, id]
+  );
+  res.json({ message: "Herói atualizado com sucesso!" });
+});
