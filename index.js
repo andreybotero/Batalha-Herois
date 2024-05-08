@@ -21,3 +21,9 @@ app.get("/herois", async (req, res) => {
   res.json(rows);
 });
 
+//Get all heróis by id
+app.get("/herois/:id", async (req, res) => {
+  const { id } = req.params;
+  const { rows } = await pool.query("SELECT * FROM herois WHERE id = $1", [id]);
+  res.json(rows);
+});
