@@ -63,7 +63,15 @@ app.put("/herois/:id", async (req, res) => {
     "UPDATE herois SET nome_heroi = $1, poder = $2, hp = $3, nivel = $4 WHERE id = $5",
     [nome_heroi, poder, hp, nivel, id]
   );
+  if (nome_heroi == "" || poder == "" || hp == "" || nivel == "") {
+    return res.status(400).send("Por favor, preencha todos os campos!");
+  }
+  //IF ID HEROI N ENCONTRADO
+
   try {
+    if (id == "") {
+      return res.status(404).send("ID do herói não encontrado!");
+    }
     res.json({
       message: "Herói atualizado com sucesso!",
       body: {
