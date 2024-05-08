@@ -66,7 +66,6 @@ app.put("/herois/:id", async (req, res) => {
   if (nome_heroi == "" || poder == "" || hp == "" || nivel == "") {
     return res.status(400).send("Por favor, preencha todos os campos!");
   }
-  //IF ID HEROI N ENCONTRADO
 
   try {
     if (id == "") {
@@ -96,6 +95,74 @@ app.delete("/herois/:id", async (req, res) => {
   }
 });
 
+//Batalha de Heróis
+
+app.get("/batalha/:id/:id2", async (req, res) => {
+  const { id, id2 } = req.params;
+  try {
+    const { rows } = await pool.query(
+      "SELECT * FROM herois WHERE id = $1 OR id = $2",
+      [id, id2]
+    );
+    const heroi1 = rows[0];
+    const heroi2 = rows[1];
+    let vencedor = null;
+    let perdedor = null;
+
+    while (heroi1.hp > 0 && heroi2.hp > 0) {
+      heroi1.hp -= heroi2.poder;
+      heroi2.hp -= heroi1.poder;
+    }
+    if (heroi1.hp > heroi2.hp) {
+      vencedor = heroi1;
+      perdedor = heroi2;
+    } else {
+      vencedor = heroi2;
+      perdedor = heroi1;
+    }
+    addHistorico(vencedor.id, perdedor.id);
+    res.json({
+      message: "Batalha finalizada!",
+      body: {
+        vencedor,
+        perdedor,
+      },
+    });
+  } catch (err) {
+    console.error("Não foi possível realizar a batalha!");
+  }
+});
+
+//Histórico de Batalhas
+const addHistorico = async (vencedor, perdedor) => {
+  try {
+    const dataAtual = new Date().toISOString().slice(0, 10); // Obtém a data atual no formato "YYYY-MM-DD"
+
+    // Insere o registro na tabela historico_batalha
+    const query = `
+      INSERT INTO historico_batalha (id_heroi, id_vilao, data)
+      VALUES ($1, $2, $3)
+    `;
+    await pool.query(query, [vencedor.id, perdedor.id, dataAtual]);
+
+    console.log("Registro de batalha adicionado ao histórico com sucesso!");
+  } catch (err) {
+    console.error("Erro ao adicionar registro ao histórico de batalha:", err);
+  }
+};
+
+app.get("/historico", async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      "SELECT  hero.nome_heroi AS vencedor,  hero2.nome_heroi AS perdedor,  h.data FROM historico_batalha h JOIN herois hero ON hero.id = h.id_vencedor JOIN herois hero2 ON hero2.id = h.id_perdedor;"
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error("Erro ao retornar o histórico de batalhas:", err);
+  }
+});
+
+//Iniciar Servidor
 app.listen(PORT, () => {
   console.log(`Server rodando na porta ${PORT}`);
 });
